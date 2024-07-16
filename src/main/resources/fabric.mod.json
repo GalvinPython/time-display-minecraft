@@ -17,22 +17,12 @@
 	"entrypoints": {
 		"main": [
 			"galvin.timedisplay.TimeDisplay"
-		],
-		"client": [
-			"galvin.timedisplay.TimeDisplayClient"
 		]
 	},
-	"mixins": [
-		"time-display.mixins.json",
-		{
-			"config": "time-display.client.mixins.json",
-			"environment": "client"
-		}
-	],
 	"depends": {
 		"fabricloader": ">=0.15.11",
-		"minecraft": "~1.20.4",
-		"java": ">=17",
+		"minecraft": "~1.21",
+		"java": ">=21",
 		"fabric-api": "*"
 	},
 	"suggests": {
