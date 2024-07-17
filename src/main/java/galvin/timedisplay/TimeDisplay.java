@@ -3,54 +3,54 @@ package galvin.timedisplay;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.resource.language.LanguageManager;
 import java.text.NumberFormat;
-import java.util.Locale;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 public class TimeDisplay implements ModInitializer {
 	private static GuiDisplay guiDisplay;
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
-	// Define the variables
+	// Declare variables to store the time
 	long localGameTime;
 	long savedDayTime;
 	long savedHourTime;
 	long savedMinuteTime;
 
+	// Declare variables to store the formatted time
 	String dayTimeString;
 	String hourTimeString;
 	String minuteTimeString;
 
+	// Update the time
+	public void updateTime() {
+		// Only run if the world exists
+		if (MinecraftClient.getInstance().world != null) {
+			// Get the time and add 6000 for the offset
+			localGameTime = MinecraftClient.getInstance().world.getTimeOfDay() + 6000;
+
+			// Get the day, hour, and minute
+			savedDayTime = localGameTime / 24000;
+			savedHourTime = (localGameTime - (savedDayTime * 24000)) / 1000;
+			savedMinuteTime = (localGameTime - (savedDayTime * 24000) - (savedHourTime * 1000)) / 17;
+
+			// Format the time
+			hourTimeString = String.format("%02d", savedHourTime);
+			minuteTimeString = String.format("%02d", savedMinuteTime);
+			NumberFormat numberFormat = NumberFormat.getInstance();
+			dayTimeString = numberFormat.format(savedDayTime);
+		}
+	}
+
 	@Override
 	public void onInitialize() {
+		// Schedule the time update task
+		scheduler.scheduleAtFixedRate(this::updateTime, 0, 1, java.util.concurrent.TimeUnit.SECONDS);
+
 		// Register the HUD render callback
 		HudRenderCallback.EVENT.register((matrices, tickDelta) -> {
-
 			// Only run if the Minecraft world exists
 			if (MinecraftClient.getInstance().world != null) {
-
-				// Get the tick time (Game starts at 6am, so we add 6000 ticks for adjustment)
-				localGameTime = MinecraftClient.getInstance().world.getTimeOfDay() + 6000;
-
-				// Update the time every real-time second and calculate the time
-				if (localGameTime % 20 == 0) {
-					savedDayTime = localGameTime / 24000;
-					savedHourTime = (localGameTime - (savedDayTime * 24000)) / 1000;
-					savedMinuteTime = (localGameTime - (savedDayTime * 24000) - (savedHourTime * 1000)) / 17;
-
-					// Format hour and minute as strings
-					hourTimeString = String.format("%02d", savedHourTime);
-					minuteTimeString = String.format("%02d", savedMinuteTime);
-
-					// Create a Locale object from the language code
-					Locale currentLocale = new Locale("en", "gb");
-					System.out.println(currentLocale);
-
-					// Use NumberFormat to format the numbers according to the locale
-					NumberFormat numberFormat = NumberFormat.getInstance();
-					dayTimeString = numberFormat.format(savedDayTime);
-				}
-
-				// For some reason I have to do this otherwise it crashes
 				if (guiDisplay == null) {
 					guiDisplay = new GuiDisplay();
 				}

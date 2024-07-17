@@ -3,15 +3,15 @@
 	"id": "time-display",
 	"version": "${version}",
 	"name": "Time Display",
-	"description": "This is an example description! Tell everyone what your mod is about!",
+	"description": "Displays the current time and day in the top left corner of the screen.",
 	"authors": [
-		"Me!"
+		"GalvinPython"
 	],
 	"contact": {
-		"homepage": "https://fabricmc.net/",
-		"sources": "https://github.com/FabricMC/fabric-example-mod"
+		"homepage": "https://github.com/GalvinPython/time-display-minecraft",
+		"sources": "https://github.com/GalvinPython/time-display-minecraft"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/time-display/icon.png",
 	"environment": "*",
 	"entrypoints": {
@@ -24,8 +24,5 @@
 		"minecraft": "~1.21",
 		"java": ">=21",
 		"fabric-api": "*"
-	},
-	"suggests": {
-		"another-mod": "*"
 	}
 }
